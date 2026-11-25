@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Հարկային Խաչբառ-Մրցույթ</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --primary: #143d6b;
+      --primary-2: #1f5c99;
+      --accent: #d97706;
+      --accent-soft: #fef3c7;
+      --highlight: #dbeafe;
+      --active-cell: #93c5fd;
+      --correct: #dcfce7;
+      --correct-border: #16a34a;
+      --wrong: #fee2e2;
+      --wrong-border: #dc2626;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #cbd5e1;
+      --shadow: 0 10px 30px rgba(20, 61, 107, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Noto Sans Armenian", "DejaVu Sans", Arial, sans-serif;
+      background: linear-gradient(135deg, #eef4fb 0%, #f8fafc 100%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: linear-gradient(120deg, var(--primary), var(--primary-2));
+      color: #fff;
+      border-radius: 18px;
+      padding: 20px 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand p {
+      font-size: 0.92rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: var(--primary);
+      border-color: #fff;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      border: 1px solid #e2e8f0;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* Login Box */
+    .login-box {
+      max-width: 500px;
+      margin: 24px auto;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-size: 1.35rem;
+    }
+
+    .login-box p {
+      color: var(--muted);
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary-2);
+      box-shadow: 0 0 0 3px rgba(31, 92, 153, 0.14);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 18px;
+      border-radius: 10px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-2);
+    }
+
+    .btn-success {
+      background: #15803d;
+      color: #fff;
+    }
+
+    .btn-success:hover {
+      background: #166534;
+    }
+
+    .btn-warning {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-warning:hover {
+      background: #b45309;
+    }
+
+    .btn-danger {
+      background: #dc2626;
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: #b91c1c;
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--primary);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      background: #f1f5f9;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    /* Top bar inside game */
+    .game-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .student-badge {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pill {
+      background: #f1f5f9;
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .pill.timer {
+      background: var(--accent-soft);
+      color: #92400e;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pill.score {
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    .active-clue-banner {
+      background: #eff6ff;
+      border-left: 5px solid var(--primary-2);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .clue-tag {
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin-right: 8px;
+    }
+
+    .clue-text {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    /* Main game grid layout */
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .game-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .grid-wrapper {
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .crossword-grid {
+      display: grid;
+      gap: 3px;
+      margin: 0 auto;
+      width: max-content;
+      background: #e2e8f0;
+      padding: 8px;
+      border-radius: 12px;
+    }
+
+    .cell {
+      width: 34px;
+      height: 34px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      user-select: none;
+    }
+
+    @media (max-width: 560px) {
+      .cell {
+        width: 27px;
+        height: 27px;
+      }
+      .cell input {
+        font-size: 0.92rem !important;
+      }
+      .cell-num {
+        font-size: 0.58rem !important;
+      }
+    }
+
+    .cell.empty {
+      background: transparent;
+    }
+
+    .cell.active-cell-bg {
+      background: #fff;
+      border: 1.5px solid #94a3b8;
+    }
+
+    .cell.highlighted {
+      background: var(--highlight) !important;
+      border-color: var(--primary-2) !important;
+    }
+
+    .cell.focused {
+      background: var(--active-cell) !important;
+      border-color: var(--primary) !important;
+    }
+
+    .cell.correct {
+      background: var(--correct) !important;
+      border-color: var(--correct-border) !important;
+    }
+
+    .cell.wrong {
+      background: var(--wrong) !important;
+      border-color: var(--wrong-border) !important;
+    }
+
+    .cell-num {
+      position: absolute;
+      top: 1px;
+      left: 2px;
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .cell input {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      font-family: inherit;
+      text-transform: uppercase;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .note-hint {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    /* Clues panel */
+    .clues-panel h3 {
+      font-size: 1.05rem;
+      color: var(--primary);
+      margin: 14px 0 8px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .clues-panel h3:first-child {
+      margin-top: 0;
+    }
+
+    .clue-item {
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: 0.15s;
+      background: #fff;
+    }
+
+    .clue-item:hover {
+      border-color: var(--primary-2);
+      background: #f8fafc;
+    }
+
+    .clue-item.active {
+      background: #eff6ff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(31, 92, 153, 0.12);
+    }
+
+    .clue-item.solved {
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+
+    .clue-item strong {
+      color: var(--primary);
+    }
+
+    /* Leaderboard & Teacher */
+    .podium {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .podium-card {
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .podium-card.rank-1 {
+      background: #fffbeb;
+      border-color: #f59e0b;
+    }
+
+    .podium-card.rank-2 {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .podium-card.rank-3 {
+      background: #fff7ed;
+      border-color: #fb923c;
+    }
+
+    .medal {
+      font-size: 1.8rem;
+      margin-bottom: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .stat-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .stat-box .num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-box .lbl {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .answer-key-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .key-chip {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 440px;
+      width: 100%;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-card h3 {
+      color: var(--primary);
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .modal-card p {
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>🏛️ Հարկային Խաչբառ-Մրցույթ</h1>
+        <p>ՀՀ հարկային համակարգ · Թեմաներ՝ 12.1, 12.2, Թեմա 1 և Թեմա 2</p>
+      </div>
+      <div class="nav-tabs">
+        <button class="tab-btn active" data-tab="game" onclick="switchTab('game')">Խաչբառ</button>
+        <button class="tab-btn" data-tab="leaderboard" onclick="switchTab('leaderboard')">Առաջատարներ</button>
+        <button class="tab-btn" data-tab="teacher" onclick="switchTab('teacher')">Դասախոս</button>
+      </div>
+    </header>
+
+    <!-- GAME VIEW -->
+    <section id="view-game" class="view active">
+      <div id="login-screen" class="card login-box">
+        <h2>Բարի գալուստ հարկային մրցույթ</h2>
+        <p>Լրացրու քո տվյալները՝ մրցույթը սկսելու և արդյունքդ առաջատարների ցուցակում գրանցելու համար։</p>
+        <form onsubmit="startGame(event)">
+          <div class="form-group">
+            <label for="student-name">Անուն Ազգանուն</label>
+            <input id="student-name" type="text" required placeholder="Օրինակ՝ Արամ Պետրոսյան" />
+          </div>
+          <div class="form-group">
+            <label for="student-group">Խումբ / Կուրս</label>
+            <input id="student-group" type="text" required placeholder="Օրինակ՝ Ֆինանսներ-2" />
+          </div>
+          <button type="submit" class="btn btn-primary w-full">Սկսել մրցույթը 🚀</button>
+        </form>
+      </div>
+
+      <div id="play-screen" class="card" style="display: none;">
+        <div class="game-topbar">
+          <div class="student-badge">
+            <span class="pill" id="display-student">👤 Մասնակից</span>
+            <span class="pill score" id="display-progress">✅ 0 / 10 ճիշտ բառ</span>
+            <span class="pill timer" id="display-timer">⏱️ 00:00</span>
+          </div>
+          <button class="btn btn-outline" onclick="changeStudent()">Փոխել մասնակցին</button>
+        </div>
+
+        <div class="active-clue-banner">
+          <div>
+            <span class="clue-tag" id="active-clue-num">1 · Հորիզոնական</span>
+            <span class="clue-text" id="active-clue-text">Ընտրիր վանդակ կամ հարց՝ հուշումը տեսնելու համար։</span>
+          </div>
+          <span class="pill" id="active-word-len">Տառերի քանակ՝ -</span>
+        </div>
+
+        <div class="game-layout">
+          <div>
+            <div class="grid-wrapper">
+              <div id="crossword-grid" class="crossword-grid"></div>
+            </div>
+
+            <div class="action-bar">
+              <button class="btn btn-warning" onclick="checkAnswers()">Ստուգել տառերը</button>
+              <button class="btn btn-success" onclick="finishContest()">Ավարտել մրցույթը</button>
+              <button class="btn btn-outline" onclick="clearGrid()">Մաքրել դաշտը</button>
+            </div>
+            <p class="note-hint">
+              💡 Հուշում. Երկար «ՈՒ» տառը լրացվում է երկու առանձին վանդակում՝ <strong>Ո</strong> և <strong>Ւ</strong>։ Կրկնակի սեղմելով նույն վանդակին՝ կարող ես փոխել հորիզոնական/ուղղահայաց ուղղությունը։
+            </p>
+          </div>
+
+          <div class="clues-panel">
+            <h3>➡️ Հորիզոնական</h3>
+            <div id="across-clues"></div>
+
+            <h3>⬇️ Ուղղահայաց</h3>
+            <div id="down-clues"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD VIEW -->
+    <section id="view-leaderboard" class="view">
+      <div class="card">
+        <div class="game-topbar">
+          <div>
+            <h2 style="color: var(--primary);">🏆 Առաջատարների ցուցակ</h2>
+            <p style="color: var(--muted); font-size: 0.9rem;">Դասակարգված՝ ըստ ճիշտ բառերի քանակի և ծախսած ժամանակի</p>
+          </div>
+          <button class="btn btn-primary" onclick="switchTab('game')">Վերադառնալ խաչբառին</button>
+        </div>
+
+        <div id="podium" class="podium"></div>
+
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Անուն Ազգանուն</th>
+                <th>Խումբ</th>
+                <th>Ճիշտ բառեր</th>
+                <th>Ժամանակ</th>
+                <th>Ամսաթիվ/Ժամ</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEACHER VIEW -->
+    <section id="view-teacher" class="view">
+      <div id="teacher-lock" class="card login-box">
+        <h2>🔐 Դասախոսի վահանակ</h2>
+        <p>Մուտքագրիր մուտքի կոդը՝ լսարանի արդյունքները և պատասխանների բանալին դիտելու համար (կոդը՝ <code>1234</code>)։</p>
+        <form onsubmit="unlockTeacher(event)">
+          <div class="form-group">
+            <label for="teacher-pin">Գաղտնաբառ</label>
+            <input id="teacher-pin" type="password" required placeholder="1234" />
+          </div>
+          <button type="submit" class="btn btn-primary w-full">Մուտք գործել</button>
+        </form>
+      </div>
+
+      <div id="teacher-dashboard" class="card" style="display: none;">
+        <div class="game-topbar">
+          <div>
+            <h2 style="color: var(--primary);">📊 Դասախոսի կառավարման վահանակ</h2>
+            <p style="color: var(--muted); font-size: 0.9rem;">Մասնակիցների վիճակագրություն և պատասխանների բանալի</p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <button class="btn btn-danger" onclick="resetResults()">Զրոյացնել արդյունքները</button>
+            <button class="btn btn-outline" onclick="lockTeacher()">Փակել վահանակը</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="num" id="stat-participants">0</div>
+            <div class="lbl">Ընդամենը մասնակից</div>
+          </div>
+          <div class="stat-box">
+            <div class="num" id="stat-avg">0.0 / 10</div>
+            <div class="lbl">Միջին արդյունք</div>
+          </div>
+          <div class="stat-box">
+            <div class="num" id="stat-top">-</div>
+            <div class="lbl">Առաջատար մասնակից</div>
+          </div>
+        </div>
+
+        <h3 style="color: var(--primary); margin-bottom: 8px;">🔑 Պատասխանների բանալի (10 բառ)</h3>
+        <div id="answer-key" class="answer-key-grid"></div>
+
+        <h3 style="color: var(--primary); margin: 22px 0 8px;">📋 Մասնակիցների մանրամասն արդյունքներ</h3>
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Անուն Ազգանուն</th>
+                <th>Խումբ</th>
+                <th>Ճիշտ բառեր</th>
+                <th>Ժամանակ</th>
+                <th>Գրանցման ժամ</th>
+              </tr>
+            </thead>
+            <tbody id="teacher-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- RESULT MODAL -->
+  <div id="result-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div style="font-size: 2.4rem; margin-bottom: 6px;">🎉</div>
+      <h3>Մրցույթն ավարտվեց</h3>
+      <p id="modal-summary"></p>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="closeModalAndGoLeaderboard()">Տեսնել առաջատարներին</button>
+        <button class="btn btn-outline" onclick="closeModal()">Շարունակել դիտել</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 10 terms from Themes 12.1, 12.2, Theme 1 & Theme 2
+    // Note: "ՈՒ" is represented as two cells: "Ո" + "Ւ"
+    const WORDS = [
+      {
+        id: 1,
+        num: 1,
+        word: "ԲԵՌՆԱԳԻՐ",
+        dir: "across",
+        row: 2,
+        col: 2,
+        clue: "Ուղեկցող հաշվարկային փաստաթուղթ, որը դուրս է գրվում մինչև ապրանքի տեղափոխությունը (Թեմա 1/2)։"
+      },
+      {
+        id: 2,
+        num: 2,
+        word: "ԳՈՒՅՔԱՀԱՐԿ",
+        dir: "down",
+        row: 0,
+        col: 4,
+        clue: "ՀՀ համայնքների բյուջեներ վճարվող տեղական հարկ (օրինակ՝ փոխադրամիջոցների մասով) (Թեմա 12.1)։"
+      },
+      {
+        id: 3,
+        num: 3,
+        word: "ԲՅՈՒՋԵ",
+        dir: "across",
+        row: 6,
+        col: 1,
+        clue: "Պետական կամ համայնքի ֆինանսական ծրագիր/հաշիվ, որտեղ վճարվում են պարտադիր և անհատույց հարկերը (Թեմա 12.1)։"
+      },
+      {
+        id: 4,
+        num: 4,
+        word: "ՇՐՋՀԱՐԿ",
+        dir: "down",
+        row: 5,
+        col: 4,
+        clue: "ԱԱՀ-ին և (կամ) շահութահարկին փոխարինող հատուկ հարկային համակարգի կրճատ անվանումը (Թեմա 12.1/12.2)։"
+      },
+      {
+        id: 5,
+        num: 5,
+        word: "ԼԻԶԻՆԳ",
+        dir: "across",
+        row: 8,
+        col: 3,
+        clue: "Ֆինանսական վարձակալության տեսակ, որի առարկայի հանձնման-ընդունման ակտը հաշվարկային փաստաթուղթ է (Թեմա 1/2)։"
+      },
+      {
+        id: 6,
+        num: 6,
+        word: "ՆՈՏԱՐ",
+        dir: "down",
+        row: 2,
+        col: 8,
+        clue: "Անձ, որը կարող է լինել շրջհարկ վճարող, սակայն չի կարող լինել միկրոձեռնարկատիրության սուբյեկտ (Թեմա 12.2)։"
+      },
+      {
+        id: 7,
+        num: 7,
+        word: "ՏՈՒՐՔ",
+        dir: "across",
+        row: 4,
+        col: 7,
+        clue: "ՀՀ-ում կիրառվող պետական կամ տեղական վճարի տեսակ (օրինակ՝ պետական կամ տեղական) (Թեմա 12.1)։"
+      },
+      {
+        id: 8,
+        num: 8,
+        word: "ԱԿՑԻԶ",
+        dir: "down",
+        row: 4,
+        col: 10,
+        clue: "Հարկման օբյեկտ համարվող որոշակի ապրանքների/գործարքների համար պետական բյուջե վճարվող պետական հարկի հիմնական արմատը (Թեմա 12.1)։"
+      },
+      {
+        id: 9,
+        num: 9,
+        word: "ԱՐՏՈՆՈՒԹՅՈՒՆ",
+        dir: "across",
+        row: 11,
+        col: 1,
+        clue: "Հարկերի, վճարների, տույժերի կամ տուգանքների հաշվարկման ու վճարման ընդհանուր կարգից բացառություն (Թեմա 2)։"
+      },
+      {
+        id: 10,
+        num: 10,
+        word: "ՈՒՂԵԿՑՈՂ",
+        dir: "down",
+        row: 8,
+        col: 6,
+        clue: "ՀՀ տարածքում շարժական նյութական գույք հանդիսացող ապրանքի տեղափոխումը հավաստող փաստաթղթի տեսակ (Թեմա 1)։"
+      }
+    ];
+
+    const ROWS = 14;
+    const COLS = 15;
+    const STORAGE_KEY = "tax_crossword_leaderboard_v1";
+    const TEACHER_PIN = "1234";
+
+    let currentStudent = null;
+    let timerInterval = null;
+    let elapsedSeconds = 0;
+    let activeWordId = 1;
+    let activeDir = "across";
+    let isFinished = false;
+
+    // Build cell map
+    const cellMap = new Map(); // key: "r,c" -> { r, c, letter, nums: [], words: [] }
+
+    function initGridData() {
+      cellMap.clear();
+      for (const w of WORDS) {
+        const chars = Array.from(w.word);
+        for (let i = 0; i < chars.length; i++) {
+          const r = w.dir === "across" ? w.row : w.row + i;
+          const c = w.dir === "across" ? w.col + i : w.col;
+          const key = `${r},${c}`;
+          if (!cellMap.has(key)) {
+            cellMap.set(key, { r, c, letter: chars[i], nums: [], words: [] });
+          }
+          const entry = cellMap.get(key);
+          if (entry.letter !== chars[i]) {
+            console.warn(`Intersection mismatch at ${key}: ${entry.letter} vs ${chars[i]}`);
+          }
+          if (i === 0 && !entry.nums.includes(w.num)) {
+            entry.nums.push(w.num);
+          }
+          entry.words.push({ wordId: w.id, index: i, dir: w.dir });
+        }
+      }
+    }
+
+    function renderGrid() {
+      initGridData();
+      const gridEl = document.getElementById("crossword-grid");
+      gridEl.style.gridTemplateColumns = `repeat(${COLS}, var(--cell-size, 34px))`;
+      if (window.innerWidth <= 560) {
+        gridEl.style.gridTemplateColumns = `repeat(${COLS}, 27px)`;
+      } else {
+        gridEl.style.gridTemplateColumns = `repeat(${COLS}, 34px)`;
+      }
+      gridEl.innerHTML = "";
+
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const key = `${r},${c}`;
+          const cellData = cellMap.get(key);
+          const cellDiv = document.createElement("div");
+          cellDiv.className = "cell";
+          cellDiv.dataset.key = key;
+
+          if (!cellData) {
+            cellDiv.classList.add("empty");
+          } else {
+            cellDiv.classList.add("active-cell-bg");
+            if (cellData.nums.length > 0) {
+              const numSpan = document.createElement("span");
+              numSpan.className = "cell-num";
+              numSpan.textContent = cellData.nums.join("/");
+              cellDiv.appendChild(numSpan);
+            }
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.maxLength = 2;
+            input.autocomplete = "off";
+            input.autocapitalize = "characters";
+            input.spellcheck = false;
+            input.dataset.key = key;
+
+            input.addEventListener("click", () => handleCellClick(r, c));
+            input.addEventListener("keydown", (e) => handleKeyDown(e, r, c));
+            input.addEventListener("input", (e) => handleInput(e, r, c));
+
+            cellDiv.appendChild(input);
+          }
+          gridEl.appendChild(cellDiv);
+        }
+      }
+
+      renderCluesList();
+      selectWord(1, "across");
+    }
+
+    function renderCluesList() {
+      const acrossEl = document.getElementById("across-clues");
+      const downEl = document.getElementById("down-clues");
+      acrossEl.innerHTML = "";
+      downEl.innerHTML = "";
+
+      for (const w of WORDS) {
+        const div = document.createElement("div");
+        div.className = "clue-item";
+        div.id = `clue-item-${w.id}`;
+        div.innerHTML = `<strong>${w.num}.</strong> ${w.clue} <span style="color:var(--muted);font-size:0.8rem;">(${Array.from(w.word).length} տառ)</span>`;
+        div.onclick = () => {
+          selectWord(w.id, w.dir);
+          focusWordFirstCell(w.id);
+        };
+        if (w.dir === "across") acrossEl.appendChild(div);
+        else downEl.appendChild(div);
+      }
+    }
+
+    function selectWord(wordId, preferredDir = null) {
+      const wordObj = WORDS.find((w) => w.id === wordId);
+      if (!wordObj) return;
+
+      activeWordId = wordObj.id;
+      activeDir = preferredDir || wordObj.dir;
+
+      document.querySelectorAll(".clue-item").forEach((el) => el.classList.remove("active"));
+      const clueEl = document.getElementById(`clue-item-${wordObj.id}`);
+      if (clueEl) clueEl.classList.add("active");
+
+      const dirLabel = wordObj.dir === "across" ? "Հորիզոնական" : "Ուղղահայաց";
+      document.getElementById("active-clue-num").textContent = `${wordObj.num} · ${dirLabel}`;
+      document.getElementById("active-clue-text").textContent = wordObj.clue;
+      document.getElementById("active-word-len").textContent = `Տառերի քանակ՝ ${Array.from(wordObj.word).length}`;
+
+      highlightActiveWord();
+    }
+
+    function highlightActiveWord() {
+      document.querySelectorAll(".cell").forEach((c) => {
+        c.classList.remove("highlighted", "focused");
+      });
+
+      const wordObj = WORDS.find((w) => w.id === activeWordId);
+      if (!wordObj) return;
+
+      const chars = Array.from(wordObj.word);
+      for (let i = 0; i < chars.length; i++) {
+        const r = wordObj.dir === "across" ? wordObj.row : wordObj.row + i;
+        const c = wordObj.dir === "across" ? wordObj.col + i : wordObj.col;
+        const cellDiv = document.querySelector(`.cell[data-key="${r},${c}"]`);
+        if (cellDiv) cellDiv.classList.add("highlighted");
+      }
+
+      const focused = document.activeElement;
+      if (focused && focused.tagName === "INPUT" && focused.dataset.key) {
+        const parent = document.querySelector(`.cell[data-key="${focused.dataset.key}"]`);
+        if (parent) parent.classList.add("focused");
+      }
+    }
+
+    function focusWordFirstCell(wordId) {
+      const w = WORDS.find((item) => item.id === wordId);
+      if (!w) return;
+      const input = document.querySelector(`.cell[data-key="${w.row},${w.col}"] input`);
+      if (input) input.focus();
+      highlightActiveWord();
+    }
+
+    function handleCellClick(r, c) {
+      const entry = cellMap.get(`${r},${c}`);
+      if (!entry) return;
+
+      const sameKey = document.activeElement && document.activeElement.dataset.key === `${r},${c}`;
+      const acrossWord = entry.words.find((w) => w.dir === "across");
+      const downWord = entry.words.find((w) => w.dir === "down");
+
+      if (sameKey && acrossWord && downWord) {
+        const nextDir = activeDir === "across" ? "down" : "across";
+        const target = nextDir === "across" ? acrossWord : downWord;
+        selectWord(target.wordId, nextDir);
+      } else if (entry.words.some((w) => w.wordId === activeWordId)) {
+        selectWord(activeWordId, activeDir);
+      } else {
+        const first = entry.words[0];
+        selectWord(first.wordId, first.dir);
+      }
+      highlightActiveWord();
+    }
+
+    function handleInput(e, r, c) {
+      const input = e.target;
+      let val = input.value.toUpperCase().replace(/[^Ա-Ֆ]/g, "");
+      if (val.length > 1) {
+        val = val.slice(-1);
+      }
+      input.value = val;
+
+      // Clear previous check styling on edit
+      const cellDiv = document.querySelector(`.cell[data-key="${r},${c}"]`);
+      if (cellDiv) cellDiv.classList.remove("correct", "wrong");
+
+      if (val) {
+        moveNextInWord(r, c, 1);
+      }
+      updateProgressBadge();
+      highlightActiveWord();
+    }
+
+    function handleKeyDown(e, r, c) {
+      if (e.key === "Backspace") {
+        const input = e.target;
+        if (!input.value) {
+          e.preventDefault();
+          moveNextInWord(r, c, -1, true);
+        } else {
+          setTimeout(() => {
+            updateProgressBadge();
+            highlightActiveWord();
+          }, 0);
+        }
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        focusCell(r, c + 1);
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        focusCell(r, c - 1);
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        focusCell(r + 1, c);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        focusCell(r - 1, c);
+      }
+    }
+
+    function focusCell(r, c) {
+      const nextInput = document.querySelector(`.cell[data-key="${r},${c}"] input`);
+      if (nextInput) {
+        nextInput.focus();
+        const entry = cellMap.get(`${r},${c}`);
+        if (entry && !entry.words.some((w) => w.wordId === activeWordId)) {
+          selectWord(entry.words[0].wordId, entry.words[0].dir);
+        }
+        highlightActiveWord();
+      }
+    }
+
+    function moveNextInWord(r, c, delta, clearTarget = false) {
+      const w = WORDS.find((item) => item.id === activeWordId);
+      if (!w) return;
+      const chars = Array.from(w.word);
+      const coords = chars.map((_, idx) => ({
+        rr: w.dir === "across" ? w.row : w.row + idx,
+        cc: w.dir === "across" ? w.col + idx : w.col
+      }));
+      const currentIdx = coords.findIndex((p) => p.rr === r && p.cc === c);
+      const nextIdx = currentIdx + delta;
+      if (nextIdx >= 0 && nextIdx < coords.length) {
+        const target = coords[nextIdx];
+        const nextInput = document.querySelector(`.cell[data-key="${target.rr},${target.cc}"] input`);
+        if (nextInput) {
+          if (clearTarget) nextInput.value = "";
+          nextInput.focus();
+        }
+      }
+    }
+
+    function getSolvedWordIds() {
+      const solved = [];
+      for (const w of WORDS) {
+        const chars = Array.from(w.word);
+        let ok = true;
+        for (let i = 0; i < chars.length; i++) {
+          const r = w.dir === "across" ? w.row : w.row + i;
+          const c = w.dir === "across" ? w.col + i : w.col;
+          const input = document.querySelector(`.cell[data-key="${r},${c}"] input`);
+          const entered = (input?.value || "").trim().toUpperCase();
+          if (entered !== chars[i]) {
+            ok = false;
+            break;
+          }
+        }
+        if (ok) solved.push(w.id);
+      }
+      return solved;
+    }
+
+    function updateProgressBadge() {
+      const solvedIds = getSolvedWordIds();
+      document.getElementById("display-progress").textContent = `✅ ${solvedIds.length} / ${WORDS.length} ճիշտ բառ`;
+
+      WORDS.forEach((w) => {
+        const clueEl = document.getElementById(`clue-item-${w.id}`);
+        if (clueEl) {
+          clueEl.classList.toggle("solved", solvedIds.includes(w.id));
+        }
+      });
+    }
+
+    function checkAnswers() {
+      cellMap.forEach((entry, key) => {
+        const cellDiv = document.querySelector(`.cell[data-key="${key}"]`);
+        const input = cellDiv?.querySelector("input");
+        if (!cellDiv || !input) return;
+        cellDiv.classList.remove("correct", "wrong");
+        const val = input.value.trim().toUpperCase();
+        if (!val) return;
+        if (val === entry.letter) {
+          cellDiv.classList.add("correct");
+        } else {
+          cellDiv.classList.add("wrong");
+        }
+      });
+      updateProgressBadge();
+    }
+
+    function clearGrid() {
+      document.querySelectorAll(".cell input").forEach((inp) => {
+        inp.value = "";
+      });
+      document.querySelectorAll(".cell").forEach((c) => {
+        c.classList.remove("correct", "wrong");
+      });
+      updateProgressBadge();
+    }
+
+    function startGame(e) {
+      e.preventDefault();
+      const name = document.getElementById("student-name").value.trim();
+      const group = document.getElementById("student-group").value.trim();
+      if (!name || !group) return;
+
+      currentStudent = { name, group };
+      isFinished = false;
+      elapsedSeconds = 0;
+
+      document.getElementById("login-screen").style.display = "none";
+      document.getElementById("play-screen").style.display = "block";
+      document.getElementById("display-student").textContent = `👤 ${name} (${group})`;
+
+      renderGrid();
+      clearGrid();
+      startTimer();
+    }
+
+    function changeStudent() {
+      stopTimer();
+      document.getElementById("play-screen").style.display = "none";
+      document.getElementById("login-screen").style.display = "block";
+    }
+
+    function startTimer() {
+      stopTimer();
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        if (!isFinished) {
+          elapsedSeconds++;
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function formatTime(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, "0");
+      const s = String(sec % 60).padStart(2, "0");
+      return `${m}:${s}`;
+    }
+
+    function updateTimerDisplay() {
+      document.getElementById("display-timer").textContent = `⏱️ ${formatTime(elapsedSeconds)}`;
+    }
+
+    function finishContest() {
+      if (!currentStudent) return;
+      checkAnswers();
+      const solvedCount = getSolvedWordIds().length;
+      isFinished = true;
+      stopTimer();
+
+      const records = loadLeaderboard();
+      records.push({
+        id: Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+        name: currentStudent.name,
+        group: currentStudent.group,
+        score: solvedCount,
+        total: WORDS.length,
+        seconds: elapsedSeconds,
+        timeFormatted: formatTime(elapsedSeconds),
+        timestamp: new Date().toLocaleString("hy-AM", {
+          day: "2-digit",
+          month: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+      });
+
+      saveLeaderboard(records);
+
+      document.getElementById("modal-summary").innerHTML =
+        `<strong>${escapeHtml(currentStudent.name)}</strong> (${escapeHtml(currentStudent.group)}), քո արդյունքը՝ <strong>${solvedCount} / ${WORDS.length}</strong> ճիշտ բառ՝ <strong>${formatTime(elapsedSeconds)}</strong> ժամանակում։`;
+      document.getElementById("result-modal").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("result-modal").classList.remove("open");
+    }
+
+    function closeModalAndGoLeaderboard() {
+      closeModal();
+      switchTab("leaderboard");
+    }
+
+    function loadLeaderboard() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveLeaderboard(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function getSortedLeaderboard() {
+      return [...loadLeaderboard()].sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.seconds - b.seconds;
+      });
+    }
+
+    function renderLeaderboard() {
+      const sorted = getSortedLeaderboard();
+      const podiumEl = document.getElementById("podium");
+      const tbody = document.getElementById("leaderboard-body");
+
+      if (sorted.length === 0) {
+        podiumEl.innerHTML = "";
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Առայժմ գրանցված արդյունքներ չկան։ Լրացրու խաչբառը՝ առաջինը լինելու համար։</td></tr>`;
+        return;
+      }
+
+      const medals = ["🥇", "🥈", "🥉"];
+      const topThree = sorted.slice(0, 3);
+      podiumEl.innerHTML = topThree
+        .map(
+          (item, idx) => `
+          <div class="podium-card rank-${idx + 1}">
+            <div class="medal">${medals[idx]}</div>
+            <div style="font-weight:700;font-size:1.02rem;">${escapeHtml(item.name)}</div>
+            <div style="color:var(--muted);font-size:0.85rem;margin-bottom:8px;">${escapeHtml(item.group)}</div>
+            <div style="font-weight:700;color:var(--primary);">${item.score} / ${item.total} բառ · ⏱️ ${item.timeFormatted}</div>
+          </div>
+        `
+        )
+        .join("");
+
+      tbody.innerHTML = sorted
+        .map(
+          (item, idx) => `
+          <tr>
+            <td><strong>${idx + 1}</strong></td>
+            <td>${escapeHtml(item.name)}</td>
+            <td>${escapeHtml(item.group)}</td>
+            <td><strong>${item.score} / ${item.total}</strong></td>
+            <td>${item.timeFormatted}</td>
+            <td style="color:var(--muted);">${item.timestamp}</td>
+          </tr>
+        `
+        )
+        .join("");
+    }
+
+    function unlockTeacher(e) {
+      e.preventDefault();
+      const pin = document.getElementById("teacher-pin").value.trim();
+      if (pin !== TEACHER_PIN) {
+        alert("Սխալ գաղտնաբառ։ Փորձիր 1234։");
+        return;
+      }
+      document.getElementById("teacher-pin").value = "";
+      document.getElementById("teacher-lock").style.display = "none";
+      document.getElementById("teacher-dashboard").style.display = "block";
+      renderTeacherDashboard();
+    }
+
+    function lockTeacher() {
+      document.getElementById("teacher-dashboard").style.display = "none";
+      document.getElementById("teacher-lock").style.display = "block";
+    }
+
+    function renderTeacherDashboard() {
+      const sorted = getSortedLeaderboard();
+      document.getElementById("stat-participants").textContent = sorted.length;
+
+      if (sorted.length === 0) {
+        document.getElementById("stat-avg").textContent = "0.0 / 10";
+        document.getElementById("stat-top").textContent = "-";
+      } else {
+        const avg = (sorted.reduce((sum, r) => sum + r.score, 0) / sorted.length).toFixed(1);
+        document.getElementById("stat-avg").textContent = `${avg} / ${WORDS.length}`;
+        document.getElementById("stat-top").textContent = `${sorted[0].name} (${sorted[0].score}/10)`;
+      }
+
+      document.getElementById("answer-key").innerHTML = WORDS.map(
+        (w) => `
+          <div class="key-chip">
+            <strong>${w.num}. ${w.dir === "across" ? "Հոր." : "Ուղղ."}</strong> → <strong>${w.word}</strong>
+          </div>
+        `
+      ).join("");
+
+      const tbody = document.getElementById("teacher-body");
+      if (sorted.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Արդյունքներ չկան։</td></tr>`;
+      } else {
+        tbody.innerHTML = sorted
+          .map(
+            (item, idx) => `
+            <tr>
+              <td>${idx + 1}</td>
+              <td>${escapeHtml(item.name)}</td>
+              <td>${escapeHtml(item.group)}</td>
+              <td><strong>${item.score} / ${item.total}</strong></td>
+              <td>${item.timeFormatted}</td>
+              <td>${item.timestamp}</td>
+            </tr>
+          `
+          )
+          .join("");
+      }
+    }
+
+    function resetResults() {
+      if (!confirm("Վստա՞հ ես, որ ուզում ես մաքրել առաջատարների բոլոր արդյունքները։")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      renderLeaderboard();
+      renderTeacherDashboard();
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll(".tab-btn").forEach((b) => {
+        b.classList.toggle("active", b.dataset.tab === tabName);
+      });
+      document.querySelectorAll(".view").forEach((v) => {
+        v.classList.remove("active");
+      });
+      document.getElementById(`view-${tabName}`).classList.add("active");
+
+      if (tabName === "leaderboard") renderLeaderboard();
+      if (tabName === "teacher" && document.getElementById("teacher-dashboard").style.display === "block") {
+        renderTeacherDashboard();
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    window.addEventListener("resize", () => {
+      const gridEl = document.getElementById("crossword-grid");
+      if (!gridEl) return;
+      gridEl.style.gridTemplateColumns =
+        window.innerWidth <= 560 ? `repeat(${COLS}, 27px)` : `repeat(${COLS}, 34px)`;
+    });
+
+    renderGrid();
+  </script>
+</body>
+</html>
